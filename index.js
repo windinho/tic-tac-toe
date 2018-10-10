@@ -85,20 +85,21 @@ function onBoxClick() {
     status()
 }
 
-var count = 0;
 function compsMove(col, row) {
-    count++;
     const random1 = Math.floor(Math.random() * Math.floor(3));
     const random2 = Math.floor(Math.random() * Math.floor(3));
-    console.log(grid[random1][random2]);
-    if(grid[random1][random2] == 0) {
+    if(grid[random1][random2] === 0) {
         grid[random1][random2] = 2;       
     }
     else {
-        if(count >= 9) {
-            return
+        for (let j = 0; j < grid.length; j++) {
+            for (let i = 0; i < 3; i++) {
+                if(grid[i][j] === 0) {
+                    grid[i][j] = 2
+                    return
+                }
+            }
         }
-        else compsMove()
     }
 }
 
@@ -110,22 +111,30 @@ function addClickHandlers() {
 }
 
 function status() {
-    for (let j = 0; j < grid.length; j++) {
-        if(grid[j][0] !== 0 && grid[j][0] === grid[j][1] && grid[j][1] === grid[j][2] || 
-            grid[0][j] !== 0 && grid[0][j] === grid[1][j] && grid[1][j] === grid[2][j]) {
+    for (let j = 0; j < 3; j++) {
+        if(grid[j][0] !== 0 && grid[j][0] === grid[j][1] && grid[j][1] === grid[j][2]) {
+            win(grid[j][0])
+            return
+        }
+        if(grid[0][j] !== 0 && grid[0][j] === grid[1][j] && grid[1][j] === grid[2][j]) {
             win(grid[0][j])
+            return
         }
     }
-    if(grid[0][0] !== 0 && grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2] ||
-        grid[2][0] !== 0 && grid[1][1] === grid[1][1] && grid[1][1] === grid[0][2]) {
+    if(grid[0][0] !== 0 && grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2]) {
+        win(grid[0][0])
+        return
+    }
+    if(grid[2][0] !== 0 && grid[2][0] === grid[1][1] && grid[1][1] === grid[0][2]) {
         win(grid[2][0])
+        return
     }
 }
 
 function win(who) {
     let winner = who === 1 ? 'User' : 'Computer'
     setTimeout(() => {
-        alert( winner + ' Wins B)')
+        alert( winner + ' Wins')
         reset()
     }, 100);
 }
