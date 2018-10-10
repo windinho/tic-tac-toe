@@ -19,8 +19,14 @@
  * 
  */
 const grid = [];
-const GRID_LENGTH = 3;
+var GRID_LENGTH = 3;
 let turn = 'X';
+document.getElementById('len').onchange = function(e) {
+    GRID_LENGTH = this.value;
+    initializeGrid();
+    renderMainGrid();
+    addClickHandlers();
+}
 
 function initializeGrid() {
     for (let colIdx = 0;colIdx < GRID_LENGTH; colIdx++) {
@@ -86,8 +92,8 @@ function onBoxClick() {
 }
 
 function compsMove(col, row) {
-    const random1 = Math.floor(Math.random() * Math.floor(3));
-    const random2 = Math.floor(Math.random() * Math.floor(3));
+    const random1 = Math.floor(Math.random() * Math.floor(GRID_LENGTH));
+    const random2 = Math.floor(Math.random() * Math.floor(GRID_LENGTH));
     if(grid[random1][random2] === 0) {
         grid[random1][random2] = 2;       
     }
@@ -111,24 +117,40 @@ function addClickHandlers() {
 }
 
 function status() {
-    for (let j = 0; j < 3; j++) {
-        if(grid[j][0] !== 0 && grid[j][0] === grid[j][1] && grid[j][1] === grid[j][2]) {
-            win(grid[j][0])
-            return
+    var line = [0, 0, 0, 0]
+    var cross = [0, 0, 0, 0]
+    for (let i = 0; i < GRID_LENGTH * 1; i++) {
+        for (let j = 0; j < GRID_LENGTH * 1; j++) {
+            let gridij = grid[i][j];
+            let gridji = grid[j][i];
+            (gridij === 1) ? line[0] += gridij : (gridij === 2) ? line[1] += gridij : 0;
+            (gridji === 1) ? line[2] += gridji : (gridji === 2) ? line[3] += gridji : 0;
+            if(i+j === GRID_LENGTH-1) {
+                (gridji === 1) ? cross[2] += gridji : (gridji === 2) ? cross[3] += gridji : 0;
+            }
+            if(i === j) {
+                (gridij === 1) ? cross[0] += gridij : (gridij === 2) ? cross[1] += gridij : 0;
+            }
         }
-        if(grid[0][j] !== 0 && grid[0][j] === grid[1][j] && grid[1][j] === grid[2][j]) {
-            win(grid[0][j])
-            return
+        if (line[0] === GRID_LENGTH * 1 || line[2] === GRID_LENGTH * 1) {
+            win(1);
+            return;
         }
+        else if (line[1] === GRID_LENGTH * 2 || line[3] === GRID_LENGTH * 2) {
+            win(2);
+            return;
+        }
+        line = [0, 0, 0, 0];
     }
-    if(grid[0][0] !== 0 && grid[0][0] === grid[1][1] && grid[1][1] === grid[2][2]) {
-        win(grid[0][0])
-        return
+    if (cross[0] === GRID_LENGTH * 1 || cross[2] === GRID_LENGTH * 1) {
+        win(1);
+        return;
     }
-    if(grid[2][0] !== 0 && grid[2][0] === grid[1][1] && grid[1][1] === grid[0][2]) {
-        win(grid[2][0])
-        return
+    else if (cross[1] === GRID_LENGTH * 2 || cross[3] === GRID_LENGTH * 2) {
+        win(2);
+        return;
     }
+    cross = [0, 0, 0, 0];
 }
 
 function win(who) {
@@ -140,8 +162,8 @@ function win(who) {
 }
 
 function reset() {
-    for (let j = 0; j < grid.length; j++) {
-        for (let i = 0; i < 3; i++) {
+    for (let j = 0; j < GRID_LENGTH; j++) {
+        for (let i = 0; i < GRID_LENGTH; i++) {
             grid[i][j] = 0
         }
     }
